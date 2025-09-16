@@ -1,6 +1,6 @@
 {
-  "name": "wxt-vue-starter",
-  "description": "manifest.json description",
+  "name": "sylview-register-helper",
+  "description": "A helper extension for Sylview",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -11,7 +11,8 @@
     "build:firefox": "wxt build -b firefox",
     "zip": "wxt zip",
     "zip:firefox": "wxt zip -b firefox",
-    "compile": "vue-tsc --noEmit",
+    "compile": "vue-tsc `--noEmit",
+    "lint": "biome check --write",
     "postinstall": "wxt prepare"
   },
   "dependencies": {
@@ -19,6 +20,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.2.4",
+    "@vitejs/plugin-vue-jsx": "^5.1.1",
     "@wxt-dev/module-vue": "^1.0.2",
     "typescript": "^5.9.2",
     "vue-tsc": "^3.0.6",
