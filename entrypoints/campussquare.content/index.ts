@@ -1,4 +1,4 @@
-import type { Message, ResponseInfoMessage } from "@/types/message";
+import type { MessagePayload, ResponseInfoMessage } from "@/types/message";
 
 const storageKey = (key: string) => `sylview_${key}`;
 
@@ -8,7 +8,7 @@ export default defineContentScript({
   allFrames: true,
   cssInjectionMode: "ui",
   async main(ctx) {
-    if (!document.title.includes("履修登録・登録状況照会")) return;
+    if (!document.title.includes("履修登録")) return;
 
     const department =
       document
@@ -63,6 +63,10 @@ export default defineContentScript({
     const jikanwariCodeInput = document.querySelector(
       "#rishuReferUpdateForm #jikanwariCode"
     ) as HTMLInputElement | null;
+    const syllabusReferButton = document.querySelector(
+      "#rishuReferUpdateForm input[value*='シラバス参照']"
+    ) as HTMLInputElement | null;
+    const syllabusRefer = () => syllabusReferButton?.click();
     if (jikanwariCodeInput) {
       const table = document.querySelector("#rishuReferUpdateForm > table");
       const day =
@@ -82,45 +86,57 @@ export default defineContentScript({
         anchor: "#rishuReferUpdateForm",
         append: "last",
         onMount: (_, frame) => {
-          frame.width = "100%";
+          frame.width = `${document.querySelector("#rishuReferUpdateForm table")?.clientWidth ?? 300}px`;
           frame.height = "500px";
           frame.style.border = "1px solid #dddddd";
         }
       });
       ui.mount();
 
-      window.addEventListener("message", (event: MessageEvent<Message>) => {
-        if (event.origin !== browser.runtime.getURL("/").slice(0, -1)) {
-          return;
-        }
-        const { type, data } = event.data;
-        switch (type) {
-          case "requestInfo": {
-            const grade = Number.parseInt(
-              sessionStorage.getItem(storageKey("grade")) ?? "",
-              10
-            );
-            const term = sessionStorage.getItem(storageKey("term")) ?? "";
-            const department =
-              sessionStorage.getItem(storageKey("department")) ?? "";
-            const response: ResponseInfoMessage = {
-              type: "responseInfo",
-              data: {
-                grade,
-                term,
-                department,
-                period
-              }
-            };
-            event.source?.postMessage(response, { targetOrigin: event.origin });
-            break;
+      window.addEventListener(
+        "message",
+        (event: MessageEvent<MessagePayload>) => {
+          if (event.origin !== browser.runtime.getURL("/").slice(0, -1)) {
+            return;
           }
-          case "requestInputCode": {
-            jikanwariCodeInput.value = data.timeTableCode;
-            break;
+          const { type, data } = event.data;
+          switch (type) {
+            case "requestInfo": {
+              const grade = Number.parseInt(
+                sessionStorage.getItem(storageKey("grade")) ?? "",
+                10
+              );
+              const term = sessionStorage.getItem(storageKey("term")) ?? "";
+              const department =
+                sessionStorage.getItem(storageKey("department")) ?? "";
+              const response: ResponseInfoMessage = {
+                type: "responseInfo",
+                data: {
+                  grade,
+                  term,
+                  department,
+                  period
+                }
+              };
+              event.source?.postMessage(response, {
+                targetOrigin: event.origin
+              });
+              break;
+            }
+            case "requestInputCode": {
+              jikanwariCodeInput.value = data.timeTableCode;
+              break;
+            }
+            case "requestOpenSyllabus": {
+              const stash = jikanwariCodeInput.value;
+              jikanwariCodeInput.value = data.timeTableCode;
+              syllabusRefer();
+              jikanwariCodeInput.value = stash;
+              break;
+            }
           }
         }
-      });
+      );
     }
   }
 });

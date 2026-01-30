@@ -6,7 +6,6 @@ import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
   modules: ["@wxt-dev/module-vue"],
-  // @ts-expect-error
   vite: () => ({
     plugins: [
       vueJsx(),
@@ -16,6 +15,7 @@ export default defineConfig({
       })
     ]
   }),
+  manifestVersion: 3,
   manifest: {
     name: "__MSG_extensionName__",
     description: "__MSG_extensionDescription__",
@@ -25,6 +25,15 @@ export default defineConfig({
         resources: ["campussquare-iframe.html"],
         matches: ["https://campusweb.office.uec.ac.jp/*"]
       }
-    ]
+    ],
+    browser_specific_settings: {
+      gecko: {
+        id: "{a0ad50e5-c1aa-445e-a279-ac79899b5705}",
+        // @ts-expect-error Firefox-specific field
+        data_collection_permissions: {
+          required: ["none"]
+        }
+      }
+    }
   }
 });

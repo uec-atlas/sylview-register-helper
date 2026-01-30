@@ -20,7 +20,15 @@ export type RequestInputCodeMessage = {
   };
 };
 
-export type Message =
+export type RequestOpenSyllabusMessage = {
+  type: "requestOpenSyllabus";
+  data: {
+    timeTableCode: string;
+  };
+};
+
+export type MessagePayload =
   | RequestInfoMessage
   | ResponseInfoMessage
-  | RequestInputCodeMessage;
+  | RequestInputCodeMessage
+  | RequestOpenSyllabusMessage;

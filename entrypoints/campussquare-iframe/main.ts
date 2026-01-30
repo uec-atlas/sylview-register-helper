@@ -1,23 +1,31 @@
-import { definePreset } from "@primeuix/themes";
+import { definePreset, palette } from "@primeuix/themes";
 import Aura from "@primeuix/themes/aura";
 import PrimeVue, { type PrimeVueConfiguration } from "primevue/config";
 import { App } from "./App";
 import "./assets/main.css";
+import urql, { fetchExchange } from "@urql/vue";
+import { cacheExchange } from "@urql/exchange-graphcache";
+import { relayPagination } from "@urql/exchange-graphcache/extras";
 
 const preset = definePreset(Aura, {
   semantic: {
-    primary: {
-      50: "{cyan-50}",
-      100: "{cyan-100}",
-      200: "{cyan-200}",
-      300: "{cyan-300}",
-      400: "{cyan-400}",
-      500: "{cyan-500}",
-      600: "{cyan-600}",
-      700: "{cyan-700}",
-      800: "{cyan-800}",
-      900: "{cyan-900}",
-      950: "{cyan-950}"
+    primary: palette("#396989")
+  },
+  components: {
+    inputtext: {
+      root: {
+        borderRadius: "0rem"
+      }
+    },
+    button: {
+      root: {
+        borderRadius: "0rem"
+      }
+    },
+    tag: {
+      root: {
+        borderRadius: "0rem"
+      }
     }
   }
 });
@@ -33,4 +41,23 @@ const primeVueConfig: PrimeVueConfiguration = {
 
 const app = createApp(App);
 app.use(PrimeVue, primeVueConfig);
+app.use(urql, {
+  url: "https://sylview.e-chan.me/api/graphql",
+  exchanges: [
+    cacheExchange({
+      resolvers: {
+        Query: {
+          syllabuses: relayPagination()
+        }
+      },
+      keys: {
+        CreditCategory: () => null
+      }
+    }),
+    fetchExchange
+  ],
+  fetchOptions: {
+    cache: "force-cache"
+  }
+});
 app.mount("#app");
