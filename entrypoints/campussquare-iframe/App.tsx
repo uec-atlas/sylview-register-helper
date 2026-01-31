@@ -192,6 +192,7 @@ export const App = defineAsyncComponent(async () => {
   };
 
   const inputTimeTableCode = (timeTableCode: string) => {
+    console.log("inputTimeTableCode", timeTableCode);
     window.parent.postMessage(
       {
         type: "requestInputCode",

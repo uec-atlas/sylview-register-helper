@@ -63,10 +63,6 @@ export default defineContentScript({
     const jikanwariCodeInput = document.querySelector(
       "#rishuReferUpdateForm #jikanwariCode"
     ) as HTMLInputElement | null;
-    const syllabusReferButton = document.querySelector(
-      "#rishuReferUpdateForm input[value*='シラバス参照']"
-    ) as HTMLInputElement | null;
-    const syllabusRefer = () => syllabusReferButton?.click();
     if (jikanwariCodeInput) {
       const table = document.querySelector("#rishuReferUpdateForm > table");
       const day =
@@ -80,7 +76,7 @@ export default defineContentScript({
       const period =
         day === "その他" ? "他" : `${day.slice(0, 1)}${time.slice(0, 1)}`;
 
-      const ui = await createIframeUi(ctx, {
+      const ui = createIframeUi(ctx, {
         page: "/campussquare-iframe.html",
         position: "inline",
         anchor: "#rishuReferUpdateForm",
@@ -99,6 +95,15 @@ export default defineContentScript({
           if (event.origin !== browser.runtime.getURL("/").slice(0, -1)) {
             return;
           }
+          const jikanwariCodeInput = document.querySelector(
+            "#rishuReferUpdateForm #jikanwariCode"
+          ) as HTMLInputElement | null;
+          if (!jikanwariCodeInput) return;
+          const syllabusReferButton = document.querySelector(
+            "#rishuReferUpdateForm input[value*='シラバス参照']"
+          ) as HTMLInputElement | null;
+          const syllabusRefer = () => syllabusReferButton?.click();
+
           const { type, data } = event.data;
           switch (type) {
             case "requestInfo": {
