@@ -1,19 +1,11 @@
-import { defineConfig } from "wxt";
-import vueJsx from "@vitejs/plugin-vue-jsx";
-import Components from "unplugin-vue-components/vite";
-import { PrimeVueResolver } from "@primevue/auto-import-resolver";
 import tailwindcss from "@tailwindcss/vite";
+import vueJsx from "@vitejs/plugin-vue-jsx";
+import { defineConfig } from "wxt";
 
 export default defineConfig({
   modules: ["@wxt-dev/module-vue"],
   vite: () => ({
-    plugins: [
-      vueJsx(),
-      tailwindcss(),
-      Components({
-        resolvers: [PrimeVueResolver()]
-      })
-    ]
+    plugins: [vueJsx(), tailwindcss()]
   }),
   manifestVersion: 3,
   manifest: {
@@ -29,7 +21,6 @@ export default defineConfig({
     browser_specific_settings: {
       gecko: {
         id: "{a0ad50e5-c1aa-445e-a279-ac79899b5705}",
-        // @ts-expect-error Firefox-specific field
         data_collection_permissions: {
           required: ["none"]
         }

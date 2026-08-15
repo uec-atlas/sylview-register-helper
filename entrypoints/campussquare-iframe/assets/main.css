@@ -1,12 +1,28 @@
 @import "tailwindcss";
-@import "tailwindcss-primeui";
 
-html, body, #app {
+@theme {
+  --color-primary-50: #eef4f8;
+  --color-primary-100: #d6e4ee;
+  --color-primary-200: #adc9dd;
+  --color-primary-300: #7fa9c8;
+  --color-primary-400: #5689b1;
+  --color-primary-500: #396989;
+  --color-primary-600: #2f5a76;
+  --color-primary-700: #264a62;
+  --color-primary-800: #1c3a4e;
+  --color-primary-900: #12293a;
+}
+
+html,
+body,
+#app {
   width: 100%;
   min-height: 100%;
   margin: 0;
   padding: 0;
   color: #222222;
   background-color: white;
-  font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "メイリオ", sans-serif;
+  font-family:
+    "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "メイリオ",
+    sans-serif;
 }

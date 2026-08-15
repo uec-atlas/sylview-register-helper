@@ -1,27 +1,32 @@
-import type { Syllabus } from "@/types/__generated__/graphql";
-import type { Query } from "../App";
+import type { SyllabusCard } from "@/lib/sparql";
 import { getCategoryInfo } from "./category";
 
-export const sortSyllabuses = (query: Query) => (a: Syllabus, b: Syllabus) => {
-  const categoryA = getCategoryInfo(a, query);
-  const categoryB = getCategoryInfo(b, query);
+const USER_ORG_PRIORITY = 10000;
+const GRADE_WEIGHT = 100;
+const CATEGORY_PRIORITY = 1000;
+const REQUIRED_PRIORITY = 10;
+
+export const sortSyllabuses = (a: SyllabusCard, b: SyllabusCard) => {
+  const categoryA = getCategoryInfo(a);
+  const categoryB = getCategoryInfo(b);
   let score = 0;
 
-  // 1. 学年
-  // 2. 必修 > 選択
-  // 3. 科目名
-  score += ((b.grades?.[0] ?? 0) - (a.grades?.[0] ?? 10)) * 100;
+  if (a.belongsToUserOrg && !b.belongsToUserOrg) score -= USER_ORG_PRIORITY;
+  else if (!a.belongsToUserOrg && b.belongsToUserOrg)
+    score += USER_ORG_PRIORITY;
+
+  score +=
+    ((b.targetGrades?.[0] ?? 0) - (a.targetGrades?.[0] ?? 10)) * GRADE_WEIGHT;
+
+  if (categoryA && !categoryB) score -= CATEGORY_PRIORITY;
+  else if (!categoryA && categoryB) score += CATEGORY_PRIORITY;
 
   if (categoryA && categoryB) {
     if (categoryA.isRequired && !categoryB.isRequired) {
-      score -= 10;
+      score -= REQUIRED_PRIORITY;
     } else if (!categoryA.isRequired && categoryB.isRequired) {
-      score += 10;
+      score += REQUIRED_PRIORITY;
     }
-  } else if (categoryA && !categoryB) {
-    score -= 1000;
-  } else {
-    score += 1000;
   }
 
   if (a.title && b.title) {

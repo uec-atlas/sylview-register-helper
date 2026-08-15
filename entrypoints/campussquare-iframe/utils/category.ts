@@ -1,21 +1,11 @@
-import type { Syllabus } from "@/types/__generated__/graphql";
-import type { Query } from "../App";
+import type { SyllabusCard } from "@/lib/sparql";
 
-export const getCategoryInfo = (syllabus: Syllabus, query: Query) => {
-  if (!syllabus.creditCategories || !query.departmentNames.length) return null;
-  const targetCategory = syllabus.creditCategories.find(
-    (cc) =>
-      cc.department?.name && query.departmentNames.includes(cc.department.name)
-  );
-  if (!targetCategory) return null;
-  const categoryNames: string[] = [];
-  let currentCategory = targetCategory.category;
-  while (currentCategory) {
-    if (currentCategory.name) categoryNames.unshift(currentCategory.name);
-    currentCategory = currentCategory.parent;
-  }
+export const getCategoryInfo = (syllabus: SyllabusCard) => {
+  const category = syllabus.category;
+  if (!category) return null;
+
   return {
-    categoryNames: categoryNames,
-    isRequired: targetCategory.isRequired
+    categoryNames: category.categoryNames,
+    isRequired: category.isRequired
   };
 };

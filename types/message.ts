@@ -10,6 +10,7 @@ export type ResponseInfoMessage = {
     term: string;
     department: string;
     period: string;
+    year: number;
   };
 };
 

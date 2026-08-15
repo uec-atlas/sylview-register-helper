@@ -1,7 +1,20 @@
-# WXT + Vue 3
+# UEC履修登録支援ツール by SylView
 
-This template should help get you started developing with Vue 3 in WXT.
+電気通信大学の履修登録ページで、UEC Atlasのシラバス情報を活用して時間割コードの検索・入力を支援するブラウザ拡張機能です。
 
-## Recommended IDE Setup
+## 機能
 
-- [VS Code](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar).
+- 履修登録ページの所属・年次・年度・学期を自動検出
+- [UEC Atlas](https://uec-atlas.org/)から時限・学期・所属組織に合致する科目を取得
+- 科目名・教員名での検索
+- 必修科目の判定とカテゴリ表示
+- 時間割コードの自動入力、シラバス参照ページへの遷移
+
+## 開発
+
+```bash
+pnpm install
+pnpm dev        # 開発サーバー起動
+pnpm build      # ビルド
+pnpm lint       # Lint & フォーマット
+```
